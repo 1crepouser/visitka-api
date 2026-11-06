@@ -28,9 +28,10 @@ else
   echo "ok: нет номеров телефона"
 fi
 
-# Адрес почты в файлах и коммитах. Разрешён только служебный адрес GitHub и адрес соавтора-ассистента.
+# Адрес почты в файлах и коммитах. Разрешены служебный адрес GitHub, адрес соавтора-ассистента
+# и адрес автора пакета glob из его сообщения в package-lock.json.
 if grep -Eo '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}' "$haystack" \
-  | grep -Ev '@users\.noreply\.github\.com$|^noreply@anthropic\.com$' | grep -q .; then
+  | grep -Ev '@users\.noreply\.github\.com$|^noreply@anthropic\.com$|^i@izs\.me$' | grep -q .; then
   fail "найден адрес почты"
 else
   echo "ok: нет адресов почты"
@@ -44,7 +45,7 @@ else
   echo "ok: нет ключей и токенов"
 fi
 
-db_urls=$(grep -Eo 'postgres(ql)?://[^[:space:]"'"'"']+' "$haystack" | grep -Ev '^postgresql://(USER:PASSWORD@HOST|visitka:local-dev-only@)' | grep -c .)
+db_urls=$(grep -Eo 'postgres(ql)?://[A-Za-z0-9_.%-]+:[^@[:space:]()]+@' "$haystack" | grep -Ev '^postgresql://(USER:PASSWORD|visitka:local-dev-only)@$' | grep -c .)
 [ "$db_urls" -gt 0 ] && fail "найден адрес базы с паролем" || echo "ok: нет настоящих адресов баз"
 
 # Запрещённые слова из файла вне репозитория: одно слово или фраза на строку.
