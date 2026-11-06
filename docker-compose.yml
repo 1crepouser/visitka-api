@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: visitka
+      POSTGRES_PASSWORD: local-dev-only # пароль только для локальной разработки, база наружу не публикуется
+      POSTGRES_DB: visitka
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U visitka -d visitka"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      target: production
+    environment:
+      DATABASE_URL: postgresql://visitka:local-dev-only@db:5432/visitka
+      PORT: ${PORT:-3000}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Тесты: docker compose --profile test run --rm --build test
+  test-db:
+    profiles: [test]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: visitka
+      POSTGRES_PASSWORD: local-dev-only
+      POSTGRES_DB: visitka_test
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U visitka -d visitka_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  test:
+    profiles: [test]
+    build:
+      context: .
+      target: build
+    environment:
+      DATABASE_URL: postgresql://visitka:local-dev-only@test-db:5432/visitka_test
+    command: npm test
+    depends_on:
+      test-db:
+        condition: service_healthy
+
+volumes:
+  db-data:
