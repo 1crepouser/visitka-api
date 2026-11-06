@@ -34,6 +34,8 @@ services:
       POSTGRES_USER: visitka
       POSTGRES_PASSWORD: local-dev-only
       POSTGRES_DB: visitka_test
+    ports:
+      - "127.0.0.1:55432:5432" # только для запуска тестов и prisma migrate dev с хоста
     tmpfs:
       - /var/lib/postgresql/data
     healthcheck:
