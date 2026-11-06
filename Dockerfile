@@ -19,12 +19,11 @@ RUN npm ci --omit=dev
 
 FROM base AS production
 ENV NODE_ENV=production
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json prisma.config.ts docker-entrypoint.sh ./
-COPY prisma/schema.prisma ./prisma/schema.prisma
-COPY prisma/migrations ./prisma/migrations
-RUN chown -R node:node /app
+COPY --chown=node:node --from=prod-deps /app/node_modules ./node_modules
+COPY --chown=node:node --from=build /app/dist ./dist
+COPY --chown=node:node package.json prisma.config.ts docker-entrypoint.sh ./
+COPY --chown=node:node prisma/schema.prisma ./prisma/schema.prisma
+COPY --chown=node:node prisma/migrations ./prisma/migrations
 USER node
 EXPOSE 3000
 ENTRYPOINT ["./docker-entrypoint.sh"]
