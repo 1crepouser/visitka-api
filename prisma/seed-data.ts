@@ -84,7 +84,7 @@ export const projects = [
   {
     id: 'project-custom',
     name: 'Заказной веб-сервис с RAG-консультантом',
-    description: 'Next.js, PostgreSQL, Prisma, pgvector, GigaChat. Код закрыт.',
+    description: 'Заказчик: компания в сфере юридических услуг. Next.js, PostgreSQL, Prisma, pgvector, GigaChat. Код закрыт.',
     url: null,
   },
 ];
