@@ -51,7 +51,7 @@ services:
       target: build
     environment:
       DATABASE_URL: postgresql://visitka:local-dev-only@test-db:5432/visitka_test
-    command: npm test
+    command: npm run check
     depends_on:
       test-db:
         condition: service_healthy

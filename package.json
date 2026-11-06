@@ -12,7 +12,8 @@
     "db:seed": "node dist/prisma/seed.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "check": "npm run typecheck && npm run lint && npm test"
   },
   "engines": {
     "node": ">=24.11.0"
